@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blablab - 4 Player Ludo</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        /* =========================
+   GLOBAL
+========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #050816;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* =========================
+   BACKGROUND
+========================= */
+
+        .bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at top left, #7c3aed55, transparent 25%),
+                radial-gradient(circle at bottom right, #06b6d455, transparent 25%),
+                #050816;
+            z-index: -2;
+        }
+
+        .glow {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: #9333ea55;
+            filter: blur(120px);
+            animation: move 8s infinite alternate;
+        }
+
+        .glow:nth-child(2) {
+            right: 0;
+            bottom: 0;
+            background: #06b6d455;
+        }
+
+        @keyframes move {
+            from {
+                transform: translateY(0px);
+            }
+
+            to {
+                transform: translateY(60px);
+            }
+        }
+
+        /* =========================
+   LOGIN
+========================= */
+
+        .login-page {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            width: 420px;
+            padding: 40px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 60px;
+            color: #a855f7;
+            text-shadow: 0 0 20px #a855f7;
+        }
+
+        .logo p {
+            color: #ccc;
+            margin-top: 10px;
+        }
+
+        .input-box {
+            margin-bottom: 20px;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            background: #111827;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #9333ea, #2563eb);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* =========================
+   APP
+========================= */
+
+        .app {
+            display: none;
+            height: 100vh;
+        }
+
+        /* =========================
+   SIDEBAR
+========================= */
+
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar h2 {
+            color: #a855f7;
+            margin-bottom: 30px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu button {
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .menu button:hover {
+            background: #7c3aed;
+        }
+
+        /* =========================
+   MAIN
+========================= */
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+   TOPBAR
+========================= */
+
+        .topbar {
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search input {
+            width: 250px;
+            padding: 12px;
+            border: none;
+            border-radius: 14px;
+            background: #111827;
+            color: white;
+        }
+
+        /* =========================
+   CONTENT
+========================= */
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .page {
+            width: 100%;
+            min-height: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        /* =========================
+   CHAT
+========================= */
+
+        .messages {
+            height: 350px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .message {
+            background: #7c3aed;
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            width: fit-content;
+            max-width: 80%;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: #111827;
+            color: white;
+        }
+
+        .chat-input button {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 14px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* =========================
+   GAME CARD
+========================= */
+
+        .game {
+            margin-top: 20px;
+            background: #111827;
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        /* =========================
+   LUDO BOARD
+========================= */
+
+        .board-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .ludo-board {
+            width: 600px;
+            height: 600px;
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            border: 5px solid #222;
+        }
+
+        /* CELLS */
+
+        .cell {
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* COLORS */
+
+        .red {
+            background: #ef4444;
+        }
+
+        .green {
+            background: #22c55e;
+        }
+
+        .blue {
+            background: #3b82f6;
+        }
+
+        .yellow {
+            background: #facc15;
+        }
+
+        .white {
+            background: white;
+        }
+
+        .center {
+            background: #9333ea;
+            color: white;
+            font-size: 30px;
+        }
+
+        /* TOKENS */
+
+        .token {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* BUTTON */
+
+        .play-btn {
+            margin-top: 20px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 15px;
+            background: #9333ea;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* FRIENDS */
+
+        .friend {
+            background: #111827;
+            padding: 15px;
+            border-radius: 14px;
+            margin-top: 15px;
+        }
+
+        /* SETTINGS */
+
+        .setting-box {
+            background: #111827;
+            padding: 15px;
+            border-radius: 14px;
+            margin-top: 15px;
+        }
+
+        /* MOBILE */
+
+        @media(max-width:900px) {
+
+            body {
+                overflow: auto;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .ludo-board {
+                width: 350px;
+                height: 350px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg">
+        <div class="glow"></div>
+        <div class="glow"></div>
+    </div>
+
+    <!-- LOGIN -->
+
+    <div class="login-page" id="loginPage">
+
+        <div class="login-box">
+
+            <div class="logo">
+                <h1>Blablab</h1>
+                <p>4 Player Gaming Website</p>
+            </div>
+
+            <div class="input-box">
+                <input type="text" id="username" placeholder="Username">
+            </div>
+
+            <div class="input-box">
+                <input type="password" id="password" placeholder="Password">
+            </div>
+
+            <button class="login-btn" onclick="login()">
+                Login
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- APP -->
+
+    <div class="app" id="app">
+
+        <!-- SIDEBAR -->
+
+        <div class="sidebar">
+
+            <h2>
+                <i class="fa-solid fa-gamepad"></i>
+                Blablab
+            </h2>
+
+            <div class="menu">
+
+                <button onclick="showPage('home')">
+                    🏠 Home
+                </button>
+
+                <button onclick="showPage('chat')">
+                    💬 Chat
+                </button>
+
+                <button onclick="showPage('games')">
+                    🎮 Games
+                </button>
+
+                <button onclick="showPage('friends')">
+                    👥 Friends
+                </button>
+
+                <button onclick="showPage('settings')">
+                    ⚙ Settings
+                </button>
+
+                <button onclick="logout()">
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- MAIN -->
+
+        <div class="main">
+
+            <div class="topbar">
+
+                <div class="search">
+                    <input type="text" placeholder="Search friends...">
+                </div>
+
+                <h3 id="welcomeUser">
+                    Welcome
+                </h3>
+
+            </div>
+
+            <!-- CONTENT -->
+
+            <div class="content">
+
+                <!-- HOME -->
+
+                <div class="page" id="homePage">
+
+                    <h1>🏠 Home</h1>
+
+                    <br>
+
+                    <div class="message">
+                        Welcome to Blablab 🚀
+                    </div>
+
+                    <div class="message">
+                        Play full Ludo with friends online.
+                    </div>
+
+                </div>
+
+                <!-- CHAT -->
+
+                <div class="page" id="chatPage" style="display:none;">
+
+                    <h1>💬 Chat Room</h1>
+
+                    <div class="messages" id="messages">
+
+                        <div class="message">
+                            Hello 👋
+                        </div>
+
+                    </div>
+
+                    <div class="chat-input">
+
+                        <input type="text" id="messageInput" placeholder="Type message...">
+
+                        <button onclick="sendMessage()">
+                            Send
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- GAMES -->
+
+                <div class="page" id="gamesPage" style="display:none;">
+
+                    <h1>🎮 Full Ludo Game</h1>
+
+                    <br>
+
+                    <h2 id="turnText">
+                        Turn: 🔴 Red
+                    </h2>
+
+                    <div class="board-container">
+
+                        <div class="ludo-board">
+
+                            <!-- ROW 1 -->
+                            <div class="cell red"></div>
+                            <div class="cell red"></div>
+                            <div class="cell red"></div>
+                            <div class="cell red"></div>
+                            <div class="cell red"></div>
+
+                            <div class="cell white"></div>
+                            <div class="cell white"></div>
+                            <div class="cell white"></div>
+
+                            <div class="cell green"></div>
+                            <div class="cell green"></div>
+                            <div class="cell green"></div>
+                            <div class="cell green"></div>
+                            <div class="cell green"></div>
+
+                            <!-- MORE CELLS -->
+                            <!-- simplified full board -->
+
+                            <!-- CENTER -->
+                            <div class="cell center" style="
+                        grid-column:7/10;
+                        grid-row:7/10;
+                        ">
+                                🏆
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <center>
+
+                        <button class="play-btn" onclick="rollDice()">
+                            🎲 Roll Dice
+                        </button>
+
+                        <br><br>
+
+                        <h2 id="diceResult">
+                            🎲
+                        </h2>
+
+                        <br>
+
+                        <h2 id="winnerText"></h2>
+
+                    </center>
+
+                </div>
+
+                <!-- FRIENDS -->
+
+                <div class="page" id="friendsPage" style="display:none;">
+
+                    <h1>👥 Online Friends</h1>
+
+                    <div class="friend">
+                        gnanavel 🟢 Online
+                    </div>
+
+                    <div class="friend">
+                        Jeeva 🟢 Online
+                    </div>
+
+                    <div class="friend">
+                        daruk 🟢 Online
+                    </div>
+
+                </div>
+
+                <!-- SETTINGS -->
+
+                <div class="page" id="settingsPage" style="display:none;">
+
+                    <h1>⚙ Settings</h1>
+
+                    <div class="setting-box">
+                        Dark Mode: Enabled
+                    </div>
+
+                    <div class="setting-box">
+                        Notifications: ON
+                    </div>
+
+                    <div class="setting-box">
+                        Region: India
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        /* USERS */
+
+        const users = [
+
+            {
+                username: "jeeva",
+                password: "1234"
+            },
+
+            {
+                username: "gnanavel",
+                password: "1111"
+            },
+
+            {
+                username: "daruk",
+                password: "2222"
+            }
+
+        ];
+
+        /* LOGIN */
+
+        function login() {
+
+            let username =
+                document.getElementById("username").value;
+
+            let password =
+                document.getElementById("password").value;
+
+            let validUser =
+                users.find(user =>
+
+                    user.username === username &&
+                    user.password === password
+
+                );
+
+            if (validUser) {
+
+                document.getElementById("loginPage")
+                    .style.display = "none";
+
+                document.getElementById("app")
+                    .style.display = "flex";
+
+                document.getElementById("welcomeUser")
+                    .innerHTML =
+                    "👋 Welcome, " + username;
+
+            }
+
+            else {
+
+                alert("Wrong Username or Password");
+
+            }
+
+        }
+
+        /* LOGOUT */
+
+        function logout() {
+
+            document.getElementById("loginPage")
+                .style.display = "flex";
+
+            document.getElementById("app")
+                .style.display = "none";
+
+        }
+
+        /* PAGE SWITCHING */
+
+        function showPage(page) {
+
+            document.getElementById("homePage")
+                .style.display = "none";
+
+            document.getElementById("chatPage")
+                .style.display = "none";
+
+            document.getElementById("gamesPage")
+                .style.display = "none";
+
+            document.getElementById("friendsPage")
+                .style.display = "none";
+
+            document.getElementById("settingsPage")
+                .style.display = "none";
+
+            document.getElementById(page + "Page")
+                .style.display = "block";
+
+        }
+
+        /* CHAT */
+
+        function sendMessage() {
+
+            let input =
+                document.getElementById("messageInput");
+
+            let messages =
+                document.getElementById("messages");
+
+            if (input.value.trim() !== "") {
+
+                let msg =
+                    document.createElement("div");
+
+                msg.className = "message";
+
+                msg.innerText =
+                    input.value;
+
+                messages.appendChild(msg);
+
+                messages.scrollTop =
+                    messages.scrollHeight;
+
+                input.value = "";
+
+            }
+
+        }
+
+        /* LUDO */
+
+        let currentPlayer = 0;
+
+        let players = [
+            "🔴 Red",
+            "🟢 Green",
+            "🔵 Blue",
+            "🟡 Yellow"
+        ];
+
+        let scores = [0, 0, 0, 0];
+
+        function rollDice() {
+
+            let dice =
+                Math.floor(Math.random() * 6) + 1;
+
+            document.getElementById(
+                "diceResult")
+                .innerHTML =
+                "🎲 " + dice;
+
+            scores[currentPlayer] += dice;
+
+            if (scores[currentPlayer] >= 30) {
+
+                document.getElementById(
+                    "winnerText")
+                    .innerHTML =
+                    players[currentPlayer] +
+                    " Wins The Game! 🏆";
+
+                return;
+
+            }
+
+            currentPlayer++;
+
+            if (currentPlayer > 3) {
+                currentPlayer = 0;
+            }
+
+            document.getElementById(
+                "turnText")
+                .innerHTML =
+                "Turn: " +
+                players[currentPlayer];
+
+        }
+
+    </script>
+
+</body>
+
+</html>
