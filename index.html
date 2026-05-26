@@ -660,184 +660,164 @@
     </script>
     <script>
 
-        /* USERS */
+        // =========================
+        // FIREBASE CONFIG
+        // =========================
+
+        const firebaseConfig = {
+
+```
+apiKey: "YOUR_API_KEY",
+
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+
+databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+
+projectId: "YOUR_PROJECT",
+
+storageBucket: "YOUR_PROJECT.appspot.com",
+
+messagingSenderId: "XXXX",
+
+appId: "XXXX"
+```
+
+};
+
+        // INIT FIREBASE
+
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.database();
+
+        // =========================
+        // USERS
+        // =========================
 
         const users = [
 
-            {
-                username: "jeeva",
-                password: "1234"
-            },
+            ```
+{
+    username: "jeeva",
+    password: "1234"
+},
 
-            {
-                username: "gnanavel",
-                password: "1111"
-            },
+{
+    username: "gnanavel",
+    password: "1111"
+},
 
-            {
-                username: "daruk",
-                password: "2222"
-            }
+{
+    username: "daruk",
+    password: "2222"
+}
+```
 
         ];
 
-        /* LOGIN */
+        let currentUser = "";
+
+        // =========================
+        // LOGIN
+        // =========================
 
         function login() {
 
-            let username =
-                document.getElementById("username").value;
+            ```
+let username =
+    document.getElementById("username").value;
 
-            let password =
-                document.getElementById("password").value;
+let password =
+    document.getElementById("password").value;
 
-            let validUser =
-                users.find(user =>
+let validUser =
+    users.find(user =>
 
-                    user.username === username &&
-                    user.password === password
+        user.username === username &&
+        user.password === password
 
-                );
+    );
 
-            if (validUser) {
+if (validUser) {
 
-                document.getElementById("loginPage")
-                    .style.display = "none";
+    currentUser = username;
 
-                document.getElementById("app")
-                    .style.display = "flex";
+    document.getElementById("loginPage")
+        .style.display = "none";
 
-                document.getElementById("welcomeUser")
-                    .innerHTML =
-                    "👋 Welcome, " + username;
+    document.getElementById("app")
+        .style.display = "flex";
 
-            }
+    document.getElementById("welcomeUser")
+        .innerHTML =
+        "👋 Welcome, " + username;
 
-            else {
+}
 
-                alert("Wrong Username or Password");
+else {
 
-            }
+    alert("Wrong Username or Password");
 
-        }
-
-        /* LOGOUT */
-
-        function logout() {
-
-            document.getElementById("loginPage")
-                .style.display = "flex";
-
-            document.getElementById("app")
-                .style.display = "none";
+}
+```
 
         }
 
-        /* PAGE SWITCHING */
-
-        function showPage(page) {
-
-            document.getElementById("homePage")
-                .style.display = "none";
-
-            document.getElementById("chatPage")
-                .style.display = "none";
-
-            document.getElementById("gamesPage")
-                .style.display = "none";
-
-            document.getElementById("friendsPage")
-                .style.display = "none";
-
-            document.getElementById("settingsPage")
-                .style.display = "none";
-
-            document.getElementById(page + "Page")
-                .style.display = "block";
-
-        }
-
-        /* CHAT */
+        // =========================
+        // CHAT SEND
+        // =========================
 
         function sendMessage() {
 
-            let input =
-                document.getElementById("messageInput");
+            ```
+let input =
+    document.getElementById("messageInput");
 
-            let messages =
-                document.getElementById("messages");
+if (input.value.trim() !== "") {
 
-            if (input.value.trim() !== "") {
+    db.ref("messages").push({
 
-                let msg =
-                    document.createElement("div");
+        user: currentUser,
 
-                msg.className = "message";
+        text: input.value
 
-                msg.innerText =
-                    input.value;
+    });
 
-                messages.appendChild(msg);
+    input.value = "";
 
-                messages.scrollTop =
-                    messages.scrollHeight;
-
-                input.value = "";
-
-            }
+}
+```
 
         }
 
-        /* LUDO */
+        // =========================
+        // CHAT RECEIVE
+        // =========================
 
-        let currentPlayer = 0;
+        db.ref("messages").on("child_added", (snapshot) => {
 
-        let players = [
-            "🔴 Red",
-            "🟢 Green",
-            "🔵 Blue",
-            "🟡 Yellow"
-        ];
+            ```
+let data = snapshot.val();
 
-        let scores = [0, 0, 0, 0];
+let messages =
+    document.getElementById("messages");
 
-        function rollDice() {
+let msg =
+    document.createElement("div");
 
-            let dice =
-                Math.floor(Math.random() * 6) + 1;
+msg.className = "message";
 
-            document.getElementById(
-                "diceResult")
-                .innerHTML =
-                "🎲 " + dice;
+msg.innerHTML =
+    "<b>" + data.user + ":</b> " + data.text;
 
-            scores[currentPlayer] += dice;
+messages.appendChild(msg);
 
-            if (scores[currentPlayer] >= 30) {
+messages.scrollTop =
+    messages.scrollHeight;
+```
 
-                document.getElementById(
-                    "winnerText")
-                    .innerHTML =
-                    players[currentPlayer] +
-                    " Wins The Game! 🏆";
+        });
 
-                return;
-
-            }
-
-            currentPlayer++;
-
-            if (currentPlayer > 3) {
-                currentPlayer = 0;
-            }
-
-            document.getElementById(
-                "turnText")
-                .innerHTML =
-                "Turn: " +
-                players[currentPlayer];
-
-        }
 
     </script>
 
